@@ -31,6 +31,11 @@ export class UserServiceBase {
   ): Promise<User[]> {
     return this.prisma.user.findMany(args);
   }
+  async user<T extends Prisma.UserFindUniqueArgs>(
+    args: Prisma.SelectSubset<T, Prisma.UserFindUniqueArgs>
+  ): Promise<User | null> {
+    return this.prisma.user.findUnique(args);
+  }
   async createUser<T extends Prisma.UserCreateArgs>(
     args: Prisma.SelectSubset<T, Prisma.UserCreateArgs>
   ): Promise<User> {
