@@ -22,6 +22,7 @@ import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateReq
 import { User } from "./User";
 import { UserCountArgs } from "./UserCountArgs";
 import { UserFindManyArgs } from "./UserFindManyArgs";
+import { UserFindUniqueArgs } from "./UserFindUniqueArgs";
 import { CreateUserArgs } from "./CreateUserArgs";
 import { DeleteUserArgs } from "./DeleteUserArgs";
 import { UserService } from "../user.service";
@@ -57,6 +58,21 @@ export class UserResolverBase {
   })
   async users(@graphql.Args() args: UserFindManyArgs): Promise<User[]> {
     return this.service.users(args);
+  }
+
+  @common.UseInterceptors(AclFilterResponseInterceptor)
+  @graphql.Query(() => User, { nullable: true })
+  @nestAccessControl.UseRoles({
+    resource: "User",
+    action: "read",
+    possession: "own",
+  })
+  async user(@graphql.Args() args: UserFindUniqueArgs): Promise<User | null> {
+    const result = await this.service.user(args);
+    if (result === null) {
+      return null;
+    }
+    return result;
   }
 
   @common.UseInterceptors(AclValidateRequestInterceptor)
