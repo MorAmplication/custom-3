@@ -60,15 +60,6 @@ const service = {
   createUser() {
     return CREATE_RESULT;
   },
-
-  user: ({ where }: { where: { id: string } }) => {
-    switch (where.id) {
-      case existingId:
-        return FIND_ONE_RESULT;
-      case nonExistingId:
-        return null;
-    }
-  },
 };
 
 const basicAuthGuard = {
@@ -140,28 +131,6 @@ describe("User", () => {
         ...CREATE_RESULT,
         createdAt: CREATE_RESULT.createdAt.toISOString(),
         updatedAt: CREATE_RESULT.updatedAt.toISOString(),
-      });
-  });
-
-  test("GET /users/:id non existing", async () => {
-    await request(app.getHttpServer())
-      .get(`${"/users"}/${nonExistingId}`)
-      .expect(HttpStatus.NOT_FOUND)
-      .expect({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: `No resource was found for {"${"id"}":"${nonExistingId}"}`,
-        error: "Not Found",
-      });
-  });
-
-  test("GET /users/:id existing", async () => {
-    await request(app.getHttpServer())
-      .get(`${"/users"}/${existingId}`)
-      .expect(HttpStatus.OK)
-      .expect({
-        ...FIND_ONE_RESULT,
-        createdAt: FIND_ONE_RESULT.createdAt.toISOString(),
-        updatedAt: FIND_ONE_RESULT.updatedAt.toISOString(),
       });
   });
 
