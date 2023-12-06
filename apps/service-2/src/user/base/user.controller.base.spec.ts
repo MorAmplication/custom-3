@@ -60,6 +60,8 @@ const service = {
   createUser() {
     return CREATE_RESULT;
   },
+
+  users: () => FIND_MANY_RESULT,
 };
 
 const basicAuthGuard = {
@@ -132,6 +134,19 @@ describe("User", () => {
         createdAt: CREATE_RESULT.createdAt.toISOString(),
         updatedAt: CREATE_RESULT.updatedAt.toISOString(),
       });
+  });
+
+  test("GET /users", async () => {
+    await request(app.getHttpServer())
+      .get("/users")
+      .expect(HttpStatus.OK)
+      .expect([
+        {
+          ...FIND_MANY_RESULT[0],
+          createdAt: FIND_MANY_RESULT[0].createdAt.toISOString(),
+          updatedAt: FIND_MANY_RESULT[0].updatedAt.toISOString(),
+        },
+      ]);
   });
 
   test("POST /users existing resource", async () => {
